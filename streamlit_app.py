@@ -8,6 +8,9 @@ import numpy as np
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+
+
+
 # Initialize chat history in Streamlit session state
 if "messages" not in st.session_state:
     st.session_state.messages = [
@@ -16,6 +19,24 @@ if "messages" not in st.session_state:
 
 st.title("📚 SAT Prep Tutor")
 st.write("Boost your SAT score with AI tutoring! Ask questions from Math, Reading, or Writing. You can also get test strategies.")
+
+if "subject" not in st.session_state:
+    st.session_state.subject = "Math"
+
+
+subject = st.selectbox(
+    "📚 Select SAT Subject Area:",
+    ["Math", "Reading", "Writing"],
+    index=["Math", "Reading", "Writing"].index(st.session_state.subject)
+)
+
+if subject != st.session_state.subject:
+    st.session_state.subject = subject
+    st.session_state.messages = [
+        {"role": "system", "content": f"You are a helpful SAT tutor specializing in {subject}. Always explain concepts clearly, provide examples, and help the student learn."}
+    ]
+    st.rerun()
+
 
 # Input box
 question = st.chat_input("Ask your SAT question:")
@@ -27,7 +48,7 @@ for msg in st.session_state.messages:
 # Reset button
 if st.button("🔄 Reset Conversation"):
     st.session_state.messages = [
-        {"role": "system", "content": "You are a helpful AI tutor. Ask guiding questions and help the student learn."}
+        {"role": "system", "content": f"You are a helpful SAT tutor specializing in {subject}. Always explain concepts clearly, provide examples, and help the student learn."}
     ]
     st.rerun()
 
