@@ -18,7 +18,11 @@ st.title("📚 SAT Prep Tutor")
 st.write("Boost your SAT score with AI tutoring! Ask questions from Math, Reading, or Writing. You can also get test strategies.")
 
 # Input box
-question = st.text_input("Your Question")
+question = st.chat_input("Ask your SAT question:")
+
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
 # Reset button
 if st.button("🔄 Reset Conversation"):
@@ -38,28 +42,7 @@ if question:
 
     answer = response.choices[0].message.content
     st.session_state.messages.append({"role": "assistant", "content": answer})
-# If user asked for a plot, try extracting and plotting a quadratic expression
-if "plot" in question.lower() and "x" in question.lower():
-    try:
-        # For now, assume form: y = ax^2 + bx + c (basic parser)
-        import re
-        match = re.search(r'y\s*=\s*([+-]?\d*)x\^2\s*([+-]?\d*)x\s*([+-]?\d+)', question.replace(" ", ""))
-        if match:
-            a = int(match.group(1) or 1)
-            b = int(match.group(2) or 0)
-            c = int(match.group(3))
 
-            x_vals = np.linspace(-10, 10, 400)
-            y_vals = a * x_vals**2 + b * x_vals + c
-
-            fig, ax = plt.subplots()
-            ax.plot(x_vals, y_vals)
-            ax.axhline(0, color='gray', lw=1)
-            ax.axvline(0, color='gray', lw=1)
-            ax.set_title(f"Graph of y = {a}x² + {b}x + {c}")
-            st.pyplot(fig)
-    except Exception as e:
-        st.error(f"Could not generate plot: {e}")
 
 # Display conversation
 for msg in st.session_state.messages:
